@@ -12,7 +12,7 @@ batch_size = params.batch_size
 model = params.model_factory()
 
 df_train = pd.read_csv('input/train_masks.csv')
-ids_train = df_train['img'].map(lambda s: s.split('.')[0])
+ids_train = df_train[0].map(lambda s: s.split()[0])
 
 ids_train_split, ids_valid_split = train_test_split(ids_train, test_size=0.2, random_state=42)
 
@@ -93,9 +93,9 @@ def train_generator():
             end = min(start + batch_size, len(ids_train_split))
             ids_train_batch = ids_train_split[start:end]
             for id in ids_train_batch.values:
-                img = cv2.imread('input/train/{}.jpg'.format(id))
+                img = cv2.imread('input/train/{}.png'.format(id))
                 img = cv2.resize(img, (input_size, input_size))
-                mask = cv2.imread('input/train_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
+                mask = cv2.imread('input/train_masks/{}.png'.format(id), cv2.IMREAD_GRAYSCALE)
                 mask = cv2.resize(mask, (input_size, input_size))
                 img = randomHueSaturationValue(img,
                                                hue_shift_limit=(-50, 50),
@@ -122,9 +122,9 @@ def valid_generator():
             end = min(start + batch_size, len(ids_valid_split))
             ids_valid_batch = ids_valid_split[start:end]
             for id in ids_valid_batch.values:
-                img = cv2.imread('input/train/{}.jpg'.format(id))
+                img = cv2.imread('input/train/{}.png'.format(id))
                 img = cv2.resize(img, (input_size, input_size))
-                mask = cv2.imread('input/train_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
+                mask = cv2.imread('input/train_masks/{}.png'.format(id), cv2.IMREAD_GRAYSCALE)
                 mask = cv2.resize(mask, (input_size, input_size))
                 mask = np.expand_dims(mask, axis=2)
                 x_batch.append(img)
